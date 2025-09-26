@@ -4,12 +4,17 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 4000; // fallback in case .env is missing
+const PORT = process.env.PORT || 4000;
 
-function Airline_Auth() {
-  app.listen(PORT, () => {
-    console.log(`Successfully started at PORT: ${PORT}`);
-  });
-}
+// Middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-Airline_Auth();
+// Import main routes
+const routes = require('./routes');
+app.use('/api', routes);   // all routes prefixed with /api
+
+// Start server
+app.listen(PORT, () => {
+  console.log(`✅ Server running at PORT: ${PORT}`);
+});

@@ -21,7 +21,7 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
          validate:[{
-        isEmail: true,
+         len: [2,10], 
       }]
       },
       createdAt: {
