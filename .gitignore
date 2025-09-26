@@ -1,2 +1,4 @@
 node_modules
 .env
+# Ignore Sequelize config with secrets
+src/config/config.json
