@@ -20,7 +20,7 @@ class UserRepository{
        }})
         return true;
     } catch (error) {
-        console.log("Something Went Wrong in User Repository")
+        console.log("Something Went Wrong in User Repository layer")
         throw error;
     }
    }
