@@ -7,7 +7,9 @@ const SALT_ROUNDS = parseInt(process.env.BCRYPT_SALT_ROUNDS) || 10;
 
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
-    static associate(models) {}
+    static associate(models) {this.belongsToMany(models.Roles,{
+      through:'User_Roles'
+    })}
 
     checkPassword(password) {
       return bcrypt.compareSync(password, this.password);
