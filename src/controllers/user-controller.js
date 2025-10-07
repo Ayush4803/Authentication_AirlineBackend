@@ -51,7 +51,29 @@ const signIn = async (req, res) => {
   }
 };
 
+const isAdmin= async(req,res)=>{
+  try {
+    const response = await userService.isAdmin(req.body.userId);
+    return res.status(200).json({
+       success: true,
+      message: response.message,
+      //token: response.token,
+      data:response,
+      error: {}
+    })
+  } catch (error) {
+    console.error("Error in isAdmin controller:", error);
+
+    return res.status(401).json({
+      success: false,
+      message: "Invalid Entry/Not A Admin",
+      error: error.message
+    });
+  }
+}
+
 module.exports = {
   create,
-  signIn
+  signIn,
+  isAdmin
 };

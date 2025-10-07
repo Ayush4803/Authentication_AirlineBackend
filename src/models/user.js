@@ -1,16 +1,20 @@
 'use strict';
 const { Model } = require('sequelize');
 const bcrypt = require('bcrypt');
-require('dotenv').config(); // load env variables
+require('dotenv').config();
 
 const SALT_ROUNDS = parseInt(process.env.BCRYPT_SALT_ROUNDS) || 10;
 
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
-    static associate(models) {this.belongsToMany(models.Roles,{
-      through:'User_Roles'
-    })}
+    static associate(models) {
+      // Many-to-Many relation: A User can have many Roles
+      this.belongsToMany(models.Roles, {
+        through: 'User_Roles'
+      });
+    }
 
+    // Compare plain password with hashed password
     checkPassword(password) {
       return bcrypt.compareSync(password, this.password);
     }
@@ -22,13 +26,13 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
         unique: true,
-        validate: { isEmail: true }
+        validate: { isEmail: true },
       },
       password: {
         type: DataTypes.STRING,
         allowNull: false,
-        validate: { len: [6, 50] }
-      }
+        validate: { len: [6, 50] },
+      },
     },
     {
       sequelize,
@@ -43,8 +47,8 @@ module.exports = (sequelize, DataTypes) => {
             const salt = bcrypt.genSaltSync(SALT_ROUNDS);
             user.password = bcrypt.hashSync(user.password, salt);
           }
-        }
-      }
+        },
+      },
     }
   );
 

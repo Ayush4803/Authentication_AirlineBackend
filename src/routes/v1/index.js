@@ -13,4 +13,5 @@ router.get('/profile', isAuthenticated, (req, res) => {
     user: req.user
   });
 });
+router.get('/isAdmin',AuthRequestValidator.validateIsAdminRequest,UserController.isAdmin)
 module.exports = router;

@@ -5,7 +5,6 @@ const UserRepository = require('../repository/user-repository');
 
 class UserService {
   constructor() {
-    // Initialize user repository instance for database operations
     this.userRepository = new UserRepository();
   }
 
@@ -34,25 +33,21 @@ class UserService {
   // 🧩 User Sign-In Logic
   async signIn(email, plainPassword) {
     try {
-      // 1️⃣ Fetch the user from the database using their email
       const user = await this.userRepository.getByEmail(email);
       if (!user) {
         throw new Error("User not found");
       }
 
-      // 2️⃣ Compare incoming plain-text password with the stored encrypted password
       const passwordMatch = await bcrypt.compare(plainPassword, user.password);
       if (!passwordMatch) {
         throw new Error("Invalid password");
       }
 
-      // 3️⃣ Generate a JWT token for the authenticated user
       const token = this.createToken({
         id: user.id,
         email: user.email,
       });
 
-      // 4️⃣ Return a success message along with token and basic user info
       return {
         message: "Sign-in successful",
         token,
@@ -61,7 +56,6 @@ class UserService {
           email: user.email,
         },
       };
-
     } catch (error) {
       console.log("Something went wrong in Sign IN process", error);
       throw error;
@@ -71,8 +65,7 @@ class UserService {
   // 🧩 Create a JWT token with 1-hour expiration
   createToken(user) {
     try {
-      const result = jwt.sign(user, JWT_KEY, { expiresIn: '1h' });
-      return result;
+      return jwt.sign(user, JWT_KEY, { expiresIn: '1h' });
     } catch (error) {
       console.log("Something went wrong in token creation");
       throw error;
@@ -82,20 +75,29 @@ class UserService {
   // 🧩 Verify a given JWT token
   verifyToken(token) {
     try {
-      const response = jwt.verify(token, JWT_KEY);
-      return response; // returns decoded payload if valid
+      return jwt.verify(token, JWT_KEY);
     } catch (error) {
       console.log("Something went wrong in token validation", error);
       throw error;
     }
   }
 
-  // 🧩 Compare plain password with hashed password (synchronous method)
+  // 🧩 Compare plain password with hashed password
   checkPassword(userInputPlainPassword, encryptedPassword) {
     try {
       return bcrypt.compareSync(userInputPlainPassword, encryptedPassword);
     } catch (error) {
       console.log("Something went wrong in password comparison");
+      throw error;
+    }
+  }
+
+  // 🧩 Check if a user is an admin
+  async isAdmin(userId) {
+    try {
+      return await this.userRepository.isAdmin(userId); // ✅ now userId is passed as argument
+    } catch (error) {
+      console.log("Error in isAdmin service:", error);
       throw error;
     }
   }
